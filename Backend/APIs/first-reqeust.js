@@ -1,12 +1,10 @@
-var request = require("request");
+const rp = require("request-promise");
 
-request("http://www.google.com", (error, response, body) => {
-  if (error) {
-    console.log("SOMETHING WENT WRONG!");
-    console.log(error);
-  } else {
-    if (response.statusCode == 200) {
-      console.log(body);
-    }
-  }
-});
+rp("https://jsonplaceholder.typicode.com/users/1")
+  .then(body => {
+    const parsedData = JSON.parse(body);
+    console.log(`${parsedData.name} lives in ${parsedData.address.city}`);
+  })
+  .catch(err => {
+    console.log("Error!", err);
+  });
