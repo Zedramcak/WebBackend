@@ -2,11 +2,19 @@ var express = require("express");
 var app = express();
 var rp = require("request-promise");
 
+app.set("view engine", "ejs");
+
+app.get("/", (req, res) => {
+  res.render("search");
+});
+
 app.get("/results", (req, res) => {
-  rp("http://www.omdbapi.com/?t=harry&apikey=thewdb")
+  var search = req.query.search;
+  var url = `http://www.omdbapi.com/?s=${search}&apikey=thewdb`;
+  rp(url)
     .then(body => {
-      var parsedData = JSON.parse(body);
-      res.send(parsedData);
+      var data = JSON.parse(body);
+      res.render("results", { data: data });
     })
     .catch(err => {
       console.log(err);
