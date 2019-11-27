@@ -86,6 +86,16 @@ app.put("/blogs/:id", (req, res) => {
   });
 });
 
+app.delete("/blogs/:id", (req, res) => {
+  Blog.findByIdAndRemove(req.params.id, err => {
+    if (err) {
+      res.redirect("/blogs");
+    } else {
+      res.redirect("/blogs");
+    }
+  });
+});
+
 app.get("/", (req, res) => {
   res.redirect("/blogs");
 });
