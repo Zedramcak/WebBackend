@@ -1,5 +1,44 @@
+.color-primary-0 {
+  color: #121e67;
+} /* Main Hlavní barva */
+.color-primary-1 {
+  color: #1629a1;
+}
+.color-primary-2 {
+  color: #172680;
+}
+.color-primary-3 {
+  color: #091248;
+}
+.color-primary-4 {
+  color: #050a2b;
+}
+
+body {
+  background-color: #121e67;
+  font-family: "abhaya_libreregular";
+}
+
 i.icon {
   font-size: 1.5em;
+}
+
+.ui.segment {
+  background-color: #1629a1;
+}
+
+.ui.items > .item {
+  border: white solid 2px;
+  padding-top: 3px;
+}
+
+.ui.huge.header {
+  color: white;
+}
+
+.ui.inverted.menu {
+  background-color: #091248;
+  color: white;
 }
 
 .container.main {
