@@ -3,28 +3,10 @@ mongoose.connect("mongodb://localhost/association_demo_2", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+var Post = require("./models/post");
+var User = require("./models/user");
 
-//* POST - title, content
-var postSchema = new mongoose.Schema({
-  title: String,
-  content: String
-});
-var Post = mongoose.model("Post", postSchema);
-
-//* USER - email, name, post
-var userSchema = new mongoose.Schema({
-  email: String,
-  name: String,
-  post: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post"
-    }
-  ]
-});
-var User = mongoose.model("User", userSchema);
-
-User.findOne({ email: "bob@gmail.com" })
+/* User.findOne({ email: "bob@gmail.com" })
   .populate("post")
   .exec((err, user) => {
     if (err) {
@@ -32,9 +14,9 @@ User.findOne({ email: "bob@gmail.com" })
     } else {
       console.log(user);
     }
-  });
+  }); */
 
-/* Post.create(
+Post.create(
   {
     title: "How to cook the best burger pt.3",
     content: "fdjuihabuiojwhrohnaoiufnouiasnf"
@@ -55,7 +37,7 @@ User.findOne({ email: "bob@gmail.com" })
       }
     });
   }
-); */
+);
 
 /*
  *User.create(
