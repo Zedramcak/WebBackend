@@ -1,8 +1,13 @@
 var express = require("express"),
   app = express(),
   bodyParser = require("body-parser"),
-  mongoose = require("mongoose");
+  mongoose = require("mongoose"),
+  seedDB = require("./seeds"),
+  Campground = require("./models/campground");
+// Comment = require("./models/comment"),
+// User = require("./models/user");
 
+seedDB();
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -10,37 +15,11 @@ mongoose.connect("mongodb://localhost:27017/yelp_camp", {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-// * Schema setup
-var campGroundSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  description: String
-});
-
-var Campground = mongoose.model("Campground", campGroundSchema);
-
-// Campground.create(
-//   {
-//     name: "Mushroom Kingdom",
-//     image:
-//       "https://images.unsplash.com/photo-1445308394109-4ec2920981b1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1353&q=80",
-//     description: "This is a huge granite hill, no bathrooms."
-//   },
-//   (err, campground) => {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log("NEW CAMPGROUND ADDED");
-//       console.log(campground);
-//     }
-//   }
-// );
-
 app.get("/", (req, res) => {
   res.render("landing");
 });
 
-//* show all camgrounds
+//* show all campgrounds
 app.get("/campgrounds", (req, res) => {
   Campground.find({}, (err, campgrounds) => {
     if (err) {
@@ -79,13 +58,17 @@ app.get("/campgrounds/new", (req, res) => {
 //* SHOW - shows more info about one campground
 app.get("/campgrounds/:id", (req, res) => {
   //* find the campground with provided id
-  Campground.findById(req.params.id, (err, foundCampground) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("show", { campground: foundCampground });
-    }
-  });
+  Campground.findById(req.params.id)
+    .populate("comments")
+    .exec((err, foundCampground) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(foundCampground);
+
+        res.render("show", { campground: foundCampground });
+      }
+    });
 });
 
 var port = process.env.PORT || 3000;
