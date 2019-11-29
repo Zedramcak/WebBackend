@@ -23,9 +23,14 @@ app.use(
 app.set("view engine", "ejs");
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+//* =============
+//* ROUTES
+//* =============
 
 app.get("/", (req, res) => {
   res.render("home");
@@ -33,6 +38,30 @@ app.get("/", (req, res) => {
 
 app.get("/secret", (req, res) => {
   res.render("secret");
+});
+
+//* Auth Routes
+//* Show form
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+//* handling user sign up
+app.post("/register", (req, res) => {
+  User.register(
+    new User({ username: req.body.username }),
+    req.body.pass,
+    (err, user) => {
+      if (err) {
+        console.log(err);
+        res.render("register");
+      } else {
+        passport.authenticate("local")(req, res, () => {
+          res.render("secret");
+        });
+      }
+    }
+  );
 });
 
 var port = process.env.PORT || 3000;
