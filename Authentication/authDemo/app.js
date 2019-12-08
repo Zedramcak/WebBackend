@@ -12,6 +12,9 @@ mongoose.connect("mongodb://localhost/auth_demo_app", {
   useUnifiedTopology: true
 });
 
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(
   require("express-session")({
     secret: "The answer is 42",
@@ -20,11 +23,10 @@ app.use(
   })
 );
 
-app.set("view engine", "ejs");
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: true }));
 
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -36,7 +38,7 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-app.get("/secret", (req, res) => {
+app.get("/secret", isLoggedIn, (req, res) => {
   res.render("secret");
 });
 
@@ -50,19 +52,46 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   User.register(
     new User({ username: req.body.username }),
-    req.body.pass,
+    req.body.password,
     (err, user) => {
       if (err) {
         console.log(err);
         res.render("register");
       } else {
         passport.authenticate("local")(req, res, () => {
-          res.render("secret");
+          res.redirect("/secret");
         });
       }
     }
   );
 });
+
+//* LOGIN ROUTES
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+//* middleware
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/secret",
+    failureRedirect: "/login"
+  }),
+  (req, res) => {}
+);
+
+app.get("/logout", (req, res) => {
+  req.logOut();
+  res.redirect("/");
+});
+
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
 
 var port = process.env.PORT || 3000;
 app.listen(port, () => {
