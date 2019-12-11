@@ -18,7 +18,8 @@ mongoose.connect("mongodb://localhost:27017/yelp_camp", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-//* RESET DB
+
+//! RESET DB
 // seedDB();
 
 app.use(bodyParser.urlencoded({ extended: true }));
