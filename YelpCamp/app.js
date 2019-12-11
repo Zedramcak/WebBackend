@@ -34,6 +34,11 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.user;
+  next();
+});
+
 app.get("/", (req, res) => {
   res.render("landing");
 });
@@ -44,7 +49,9 @@ app.get("/campgrounds", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.render("campgrounds/index", { campgrounds: campgrounds });
+      res.render("campgrounds/index", {
+        campgrounds: campgrounds
+      });
     }
   });
   // *   res.render("campgrounds", { campgrounds: campgrounds });
